@@ -61,10 +61,40 @@ def cpu():
     return output_list
 
 
+def memory():
+
+    output, err = \
+        subprocess.Popen(['cat','/proc''/meminfo'], stdout=subprocess.PIPE).communicate()
+
+    # 'output' variable has data in bytes. We want to have string. Using
+    # decode() method we can convert it by specifying appropriate encoding
+
+    output = output.decode("utf-8").split("\n")
+    mem_list=[]
+    mem_attributes=['MemTotal', 'MemFree','Cached','Buffers','SwapCached','Active','Inactive','SwapTotal','SwapFree','PageTables' ]
+
+    #The kind of output we are interested in is:
+    #MemTotal:3913140 kB
+    #MemFree:2212592 kB
+    #Cached:1057776 kB
+    #Buffers: 68596 kB
+    #SwapCached:0 kB
+    #and further details
+    #After parsing the mem_attributes data from output,append it to mem_list
+    #and than return mem_list
+    
+    for j in mem_attributes:
+        for i in output:
+            if i.split(":")[0] == j:
+                mem_list.append(i)
+    return mem_list
+
+
 def main():
     # Calls all available modules
-    network()
-    cpu()
+    print("\nmemory info\n",memory())
+    print("\nnetwork interfaces\n",network())
+    print("\ncpu info \n",cpu())
 
 
 if __name__ == "__main__":
